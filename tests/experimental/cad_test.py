@@ -5,10 +5,13 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import mediapipe.python.solutions.hands as mp_hands 
 
-from track import track_deltas
+from tests.experimental.track import track_deltas
 from utils.shapes import GlCube
 from utils.constants import FEATURE_TABLE
 
+
+HEIGHT = 800
+WIDTH = HEIGHT * 16 // 9
 
 def render(objects):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -28,9 +31,6 @@ def handle_events(cap):
                 break 
 
 def main():
-    HEIGHT = 800
-    WIDTH = HEIGHT * 16 // 9
-
     surface = pygame.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("Cad Test#01")
     #running = True 

@@ -9,6 +9,24 @@ from track import track_deltas
 from utils.shapes import GlCube
 from utils.constants import FEATURE_TABLE
 
+
+def render(objects):
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    for obj in objects:
+        obj.render()
+    pygame.display.flip() 
+
+def handle_events(cap):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            cap.release()
+            break
+                
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                cap.release()
+                break 
+
 def main():
     HEIGHT = 800
     WIDTH = HEIGHT * 16 // 9
@@ -25,7 +43,7 @@ def main():
     gluPerspective(45, (WIDTH / HEIGHT), 0.1, 50.0)
     glTranslatef(0, 0, -10)
 
-    cube = GlCube()
+    objects = [GlCube()]
     
     # keep track of the hands
     with mp_hands.Hands(
@@ -40,23 +58,12 @@ def main():
         while cap.isOpened():
             multi_hand_landmarks = track_deltas(cap, hands, tracked_features, feature_positions)
             if tracked_features[0] is not None and multi_hand_landmarks: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
-           
-            
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            cube.render()
-            pygame.display.flip()
 
+            render(objects)
             fps_clock.tick(fps)
             # handle events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    cap.release()
-                    break
-                
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        cap.release()
-                        break 
+            handle_events(cap)
+
         return
             
 # main entry point

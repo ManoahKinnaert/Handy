@@ -5,50 +5,14 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import mediapipe.python.solutions.hands as mp_hands 
 
+from track import track_deltas
+from utils.shapes import GlCube
 
 FEATURE_TABLE = ["WRIST", "THUMB_CMC", "THUMB_MCP", "THUMB_IP", "THUMB_TIP", "INDEX_FINGER_MCP",
                  "INDEX_FINGER_PIP", "INDEX_FINGER_DIP", "INDEX_FINGER_TIP", "MIDDLE_FINGER_MCP",
                  "MIDDLE_FINGER_PIP", "MIDDLE_FINGER_DIP", "MIDDLE_FINGER_TIP", "RING_FINGER_MCP",
                  "RING_FINGER_PIP", "RING_FINGER_DIP", "RING_FINGER_TIP", "PINCKY_MCP", "PINCKY_PIP",
                  "PINCKY_DIP", "PINCKY_TIP"]
-
-cube_vertices = ( 
-    (1, -1, -1),
-    (1, 1, -1),
-    (-1, 1, -1),
-    (-1, -1, -1),
-    (1, -1, 1),
-    (1, 1, 1),
-    (-1, -1, 1),
-    (-1, 1, 1)
-)
-
-cube_edges = (
-    (0,1),
-    (0,3),
-    (0,4),
-    (2,1),
-    (2,3),
-    (2,7),
-    (6,3),
-    (6,4),
-    (6,7),
-    (5,1),
-    (5,4),
-    (5,7)
-)
-
-# render the demo cube
-def render_cube():
-    glBegin(GL_LINES)
-    for edge in cube_edges:
-        for vertex in edge:
-            glVertex3fv(cube_vertices[vertex])
-    glEnd()
-
-
-def delta(a: float, b: float):
-    return b - a
 
 def main():
     HEIGHT = 800
@@ -65,6 +29,8 @@ def main():
     # ensure scaling happens properly
     gluPerspective(45, (WIDTH / HEIGHT), 0.1, 50.0)
     glTranslatef(0, 0, -10)
+
+    cube = GlCube()
     
     # keep track of the hands
     with mp_hands.Hands(
@@ -77,29 +43,12 @@ def main():
         tracked_features = [None for _ in FEATURE_TABLE]
         feature_positions = [None for _ in FEATURE_TABLE]
         while cap.isOpened():
-            # handtracking
-            success, frame = cap.read()
-            if not success:
-                print("[DEBUG]: Just ignoring empty camera frame.")
-                continue
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = hands.process(frame_rgb)
-            img_h, img_w, _ = frame_rgb.shape
-            if results.multi_hand_landmarks:
-                for hand_landmarks in results.multi_hand_landmarks:
-                    for ids, landmrk in enumerate(hand_landmarks.landmark):
-                        if ids == 0:
-                            cx, cy = landmrk.x * img_w, landmrk.y * img_h 
-                            if tracked_features[0] is None and feature_positions[0] is None:
-                                tracked_features[ids] = (cx, cy)
-                                feature_positions[ids] = (cx, cy)
-                            tracked_features[ids] = (-delta(feature_positions[ids][0], cx) / 1000, -delta(feature_positions[ids][1], cy) / 700)
-                            glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
-                            print(f"[DEBUG]: pos {FEATURE_TABLE[ids], cx, cy}") 
-                            print(f"[DEBUG]: delta {FEATURE_TABLE[ids]} = {tracked_features[ids]}")
+            multi_hand_landmarks = track_deltas(cap, hands, tracked_features, feature_positions)
+            if tracked_features[0] is not None and multi_hand_landmarks: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
+           
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-            render_cube()
+            cube.render()
             pygame.display.flip()
 
             fps_clock.tick(fps)

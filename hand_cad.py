@@ -31,6 +31,8 @@ async def move_model(model):
                 print("Ignoring empty camera frame...")
                 continue
 
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
             # Check the frame for hands
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = hands.process(frame_rgb)

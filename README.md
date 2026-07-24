@@ -19,7 +19,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-## Run some basic tests
+## Run some tests
 Run the following to get started:
 ```bash
 PYTHONPATH="." python tests/run_tests.py

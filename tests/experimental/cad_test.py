@@ -37,7 +37,7 @@ def main():
     fps_clock = pygame.time.Clock()
     fps = 24
     # init video capture
-    cap = cv2.VideoCapture(index=1)
+    cap = cv2.VideoCapture(0)
 
     # ensure scaling happens properly
     gluPerspective(45, (WIDTH / HEIGHT), 0.1, 50.0)

@@ -29,8 +29,8 @@ def track_deltas(cap, hands, tracked_features, feature_positions):
                         feature_positions[ids] = (cx, cy)
                     tracked_features[ids] = (-delta(feature_positions[ids][0], cx) / 1000, -delta(feature_positions[ids][1], cy) / 700)
 
-                print(f"[DEBUG]: pos {FEATURE_TABLE[ids], cx, cy}") 
-                print(f"[DEBUG]: delta {FEATURE_TABLE[ids]} = {tracked_features[ids]}")
+                #print(f"[DEBUG]: pos {FEATURE_TABLE[ids], cx, cy}") 
+                #print(f"[DEBUG]: delta {FEATURE_TABLE[ids]} = {tracked_features[ids]}")
     return results.multi_hand_landmarks
             
 def run_hand_tracking_on_webcam():

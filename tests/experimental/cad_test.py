@@ -27,6 +27,14 @@ def render(objects):
         obj.render()
     pygame.display.flip() 
 
+def drag(sensitivity: int):
+    global TRACKED_FEATURES
+    pass 
+
+def rotate(sensitivity: int):
+    global TRACKED_FEATURES
+    pass 
+
 def handle_events(cap):
     global DRAG_ENABLED, ROTATE_ENABLED
     global TRACKED_FEATURES, FEATURE_POSITIONS

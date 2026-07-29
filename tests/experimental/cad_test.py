@@ -84,7 +84,6 @@ def main():
             if TRACKED_FEATURES[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(TRACKED_FEATURES[0][0], TRACKED_FEATURES[0][1], 0)
             # TODO: ROTATE the object
             elif TRACKED_FEATURES[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: 
-                print("test")
                 glRotate(1, TRACKED_FEATURES[0][1], TRACKED_FEATURES[0][0], 0) 
 
             render(objects)

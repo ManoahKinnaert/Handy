@@ -13,7 +13,8 @@ from utils.constants import FEATURE_TABLE
 HEIGHT = 800
 WIDTH = HEIGHT * 16 // 9
 
-DRAG_ENABLED = False 
+DRAG_ENABLED = False
+ROTATE_ENABLED = False  
 TRACKED_FEATURES = [None for _ in FEATURE_TABLE]
 FEATURE_POSITIONS = [None for _ in FEATURE_TABLE]
 
@@ -24,7 +25,7 @@ def render(objects):
     pygame.display.flip() 
 
 def handle_events(cap):
-    global DRAG_ENABLED
+    global DRAG_ENABLED, ROTATE_ENABLED
     global TRACKED_FEATURES, FEATURE_POSITIONS
 
     for event in pygame.event.get():
@@ -36,6 +37,9 @@ def handle_events(cap):
             if event.key == pygame.K_d:
                 DRAG_ENABLED = not DRAG_ENABLED 
                 print("[DEBUG]: D pressed", DRAG_ENABLED)
+
+            elif event.key == pygame.K_r:
+                ROTATE_ENABLED = not ROTATE_ENABLED
             
             # choose a new reference point for the hand
             elif event.key == pygame.K_c:
@@ -47,7 +51,7 @@ def handle_events(cap):
                 break 
             
 def main():
-    global DRAG_ENABLED
+    global DRAG_ENABLED, ROTATE_ENABLED
     surface = pygame.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("Cad Test#01")
     fps_clock = pygame.time.Clock()
@@ -76,7 +80,11 @@ def main():
             # handle events
             handle_events(cap)
             multi_hand_landmarks = track_deltas(cap, hands, tracked_features, feature_positions)
-            if tracked_features[0] is not None and multi_hand_landmarks and DRAG_ENABLED: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
+            # DRAG the object in 2d
+            if tracked_features[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
+            # TODO: ROTATE the object
+            elif not tracked_features[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: pass
+
             
             render(objects)
             fps_clock.tick(fps)

@@ -1,3 +1,6 @@
+"""
+The code in here is by no means 'quality' or for 'production'.
+"""
 import cv2
 import pygame 
 from pygame.locals import *
@@ -40,7 +43,7 @@ def handle_events(cap):
 
             elif event.key == pygame.K_r:
                 ROTATE_ENABLED = not ROTATE_ENABLED
-            
+                print("[DEBUG]: R pressed", ROTATE_ENABLED) 
             # choose a new reference point for the hand
             elif event.key == pygame.K_c:
                 TRACKED_FEATURES = [None for _ in FEATURE_TABLE]
@@ -73,7 +76,6 @@ def main():
     min_tracking_confidence=.5
     ) as hands:
         # actual mainloop
-        
         tracked_features = [None for _ in FEATURE_TABLE]
         feature_positions = [None for _ in FEATURE_TABLE]
         while cap.isOpened():
@@ -83,9 +85,10 @@ def main():
             # DRAG the object in 2d
             if tracked_features[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
             # TODO: ROTATE the object
-            elif not tracked_features[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: pass
+            elif tracked_features[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: 
+                print("test")
+                glRotate(1, tracked_features[0][1], tracked_features[0][0], 0) 
 
-            
             render(objects)
             fps_clock.tick(fps)
            

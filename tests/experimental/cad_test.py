@@ -54,7 +54,7 @@ def handle_events(cap):
                 break 
             
 def main():
-    global DRAG_ENABLED, ROTATE_ENABLED
+    global DRAG_ENABLED, ROTATE_ENABLED, TRACKED_FEATURES, FEATURE_POSITIONS
     surface = pygame.display.set_mode((WIDTH, HEIGHT), DOUBLEBUF | OPENGL)
     pygame.display.set_caption("Cad Test#01")
     fps_clock = pygame.time.Clock()
@@ -76,24 +76,20 @@ def main():
     min_tracking_confidence=.5
     ) as hands:
         # actual mainloop
-        tracked_features = [None for _ in FEATURE_TABLE]
-        feature_positions = [None for _ in FEATURE_TABLE]
         while cap.isOpened():
             # handle events
             handle_events(cap)
-            multi_hand_landmarks = track_deltas(cap, hands, tracked_features, feature_positions)
+            multi_hand_landmarks = track_deltas(cap, hands, TRACKED_FEATURES, FEATURE_POSITIONS)
             # DRAG the object in 2d
-            if tracked_features[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(tracked_features[0][0], tracked_features[0][1], 0)
+            if TRACKED_FEATURES[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(TRACKED_FEATURES[0][0], TRACKED_FEATURES[0][1], 0)
             # TODO: ROTATE the object
-            elif tracked_features[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: 
+            elif TRACKED_FEATURES[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: 
                 print("test")
-                glRotate(1, tracked_features[0][1], tracked_features[0][0], 0) 
+                glRotate(1, TRACKED_FEATURES[0][1], TRACKED_FEATURES[0][0], 0) 
 
             render(objects)
             fps_clock.tick(fps)
            
-        return
-            
 # main entry point
 if __name__ == "__main__":
     main()

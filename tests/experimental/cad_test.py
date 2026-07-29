@@ -12,7 +12,6 @@ from tests.experimental.track import track_deltas
 from utils.shapes import GlCube
 from utils.constants import FEATURE_TABLE
 
-
 HEIGHT = 800
 WIDTH = HEIGHT * 16 // 9
 
@@ -27,13 +26,15 @@ def render(objects):
         obj.render()
     pygame.display.flip() 
 
-def drag(sensitivity: int):
+def drag(sensitivity: float=1):
     global TRACKED_FEATURES
-    pass 
+    assert sensitivity > 0 and sensitivity <= 2.0
+    glTranslate(sensitivity * TRACKED_FEATURES[0][0], sensitivity * TRACKED_FEATURES[0][1], 0)
 
-def rotate(sensitivity: int):
+def rotate(sensitivity: float=1):
     global TRACKED_FEATURES
-    pass 
+    assert sensitivity > 0 and sensitivity <= 2.0
+    glRotate(1, sensitivity * TRACKED_FEATURES[0][1], sensitivity * TRACKED_FEATURES[0][0], 0)  
 
 def handle_events(cap):
     global DRAG_ENABLED, ROTATE_ENABLED
@@ -89,11 +90,10 @@ def main():
             handle_events(cap)
             multi_hand_landmarks = track_deltas(cap, hands, TRACKED_FEATURES, FEATURE_POSITIONS)
             # DRAG the object in 2d
-            if TRACKED_FEATURES[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: glTranslate(TRACKED_FEATURES[0][0], TRACKED_FEATURES[0][1], 0)
-            # TODO: ROTATE the object
-            elif TRACKED_FEATURES[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: 
-                glRotate(1, TRACKED_FEATURES[0][1], TRACKED_FEATURES[0][0], 0) 
-
+            if TRACKED_FEATURES[0] is not None and multi_hand_landmarks and DRAG_ENABLED and not ROTATE_ENABLED: drag(0.5)
+            # ROTATE the object
+            elif TRACKED_FEATURES[0] is not None and multi_hand_landmarks and not DRAG_ENABLED and ROTATE_ENABLED: rotate() 
+                
             render(objects)
             fps_clock.tick(fps)
            
